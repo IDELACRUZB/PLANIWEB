@@ -1,0 +1,46 @@
+{
+    "planiweb":{
+        "bpo":[
+            {
+                "campaign": "bpo",
+                "reports":[
+                    {
+                        "code": "excepciones",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                       "anadir_fecha": false,
+                        "anadir_anio": true
+                    }
+                ]
+            }
+        ],
+        "terceriza":[
+            {
+                "campaign": "terceriza",
+                "reports":[
+                    {
+                        "code": "excepciones",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                        "anadir_fecha": false,
+                        "anadir_anio": true
+                    }
+                ]
+            }
+        ]
+    }
+}

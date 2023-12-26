@@ -1,0 +1,111 @@
+{
+    "planiweb":{
+        "bpo":[
+            {
+                "campaign": "bpo",
+                "reports":[
+                    {
+                        "code": "excepciones",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                        "columnas_id":["grupo", "nro_doc", "cod_costo", "fecha_creacion", "fecha_inicio", "fecha_fin"],
+                        "anadir_fecha": false,
+                        "grupo": null
+                    },
+                    {
+                        "code": "prestamos",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                        "columnas_id":null,
+                        "anadir_fecha": false,
+                        "grupo": "BPO"
+                    },
+                    {
+                        "code": "planilla_consolidada",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {
+                                "Unnamed: 0": "Nombre",
+                                "Unnamed: 28": "Neto"
+                            },
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 10,
+                        "columnas_id":null,
+                        "anadir_fecha": false,
+                        "grupo": null
+                    },
+                    {
+                        "code": "vacaciones",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                        "columnas_id":null,
+                        "anadir_fecha": false,
+                        "grupo": "BPO"
+                    },
+                    {
+                        "code": "vacaciones_pendientes",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                        "columnas_id":null,
+                        "anadir_fecha": false,
+                        "grupo": "BPO"
+                    }
+                ]
+            }
+        ],
+        "terceriza":[
+            {
+                "campaign": "terceriza",
+                "reports":[
+                    {
+                        "code": "excepciones",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                        "columnas_id":["grupo", "nro_doc", "cod_costo", "fecha_creacion", "fecha_inicio", "fecha_fin"],
+                        "anadir_fecha": false,
+                        "grupo": null
+                    }
+                ]
+            }
+        ]
+    }
+}
