@@ -6,7 +6,7 @@ import os
 import re
 
 class ReportService:
-    def loadData(self,filePath, tableName : str, dbName : str, tipo, fecha_insert, anio_insert, grupo, code, skip_rows, properties : {}, renameColumns : {}, converters : []):
+    def loadData(self,filePath, tableName : str, dbName : str, tipo, fecha_insert, anio_insert, periodo_insert, columnas_id, grupo, code, skip_rows, properties : {}, renameColumns : {}, converters : []):
         filePath = filePath
         
         # Nombre de la tabla
@@ -21,38 +21,92 @@ class ReportService:
         if tipo == 'csv':
             df = pd.read_csv(filePath, sep='|', dtype=str, header=0, encoding='ISO-8859-1')
         elif tipo == 'excel':
-            df = pd.read_excel(filePath, dtype=str, skiprows=skip_rows)
+            if code == "vacaciones":
+                df1 = pd.read_excel(filePath, dtype=str, skiprows=9)
+                df2 = pd.read_excel(filePath, dtype=str, skiprows=10)
+
+                df1_cols = df1.columns
+                df2_cols = df2.columns
+                anios = [elemento for elemento in df1_cols if len(elemento) == 4 and elemento[:2] == '20']
+                names = df1_cols[:9].append(df2_cols[9:17])
+
+                no_existe_df = True
+                for i in range(len(anios)):
+                    if no_existe_df:
+                        df = df2.iloc[:, :9].join(df2.iloc[:, 9 + (8*i):17 +(8*i)])
+                        mapeo_nombres = dict(zip(df.columns, names))
+                        df.rename(columns=mapeo_nombres, inplace=True)
+                        df.insert(0, "anio", anios[i])
+
+                        no_existe_df = False
+                    else:
+                        df_x = df2.iloc[:, :9].join(df2.iloc[:, 9 + (8*i):17 +(8*i)])
+                        mapeo_nombres = dict(zip(df_x.columns, names))
+                        df_x.rename(columns=mapeo_nombres, inplace=True)
+                        df_x.insert(0, "anio", anios[i])
+
+                        df = pd.concat([df, df_x], axis=0)
+            elif code == "vacaciones_pendientes":
+                df1 = pd.read_excel(filePath, dtype=str, skiprows=9)
+                df2 = pd.read_excel(filePath, dtype=str, skiprows=10)
+
+                df1_cols = df1.columns
+                df2_cols = df2.columns
+                names = df1_cols[:9].append(df2_cols[-7:-2]).append(df1_cols[-2:])
+                df = df2.iloc[:, :9].join(df2.iloc[:, -7:])
+                mapeo_nombres = dict(zip(df.columns, names))
+                df.rename(columns=mapeo_nombres, inplace=True)
+            elif code == "gastos_planilla":
+                df1 = pd.read_excel(filePath, dtype=str, skiprows=10)
+                df1.columns.values[0] = 'concepto_costo'
+                df1.columns.values[-4] = 'TOTAL OPERATIVOS'
+                df1.columns.values[-2] = 'TOTAL STAFF'
+                df1.columns.values[-1] = 'TOTAL'
+
+                conceptos = ['REMUNERACIONES', 'COMISIONES', 'CARGA LABORAL', 'PRESTACION ALIMENTARIA','MOVILIDAD','TOTALES']
+
+                lista = []
+                i = 1
+                for valor in df1['concepto_costo']:
+                    if valor == conceptos[i]:
+                        concepto = conceptos[i]
+                        i+=1
+                    else:
+                        concepto = conceptos[i-1]
+                    lista.append((concepto, valor))
+
+                df_x = pd.DataFrame(lista, columns=['concepto', 'concepto_detalle'])
+
+                columnas = []
+                for value in df1.columns:
+                    columnas.append(value)
+
+                no_existe_df = True
+                
+                for i in range(1,len(columnas)):
+                    centro_costo = columnas[i]
+
+                    lista2 = []
+                    for valor in df1[centro_costo]:
+                        lista2.append((centro_costo, valor))
+
+                    df_y = pd.DataFrame(lista2, columns=['centro_costo', 'gasto'])
+                    df_t = pd.concat([df_x, df_y], axis=1)
+                
+                    if no_existe_df:
+                        df = df_t.copy()
+                        no_existe_df = False
+                    else:
+                        df = pd.concat([df, df_t])
+            else:
+                df = pd.read_excel(filePath, dtype=str, skiprows=skip_rows)
 
         if fecha_insert:
             df.insert(0, 'fecha', fecha_insert)
         if anio_insert:
             df.insert(0, 'anio', anio_insert)
-        
-        if code == "vacaciones":
-            df = df.drop(0)
-            anio = df.columns[9]
-            df = df.iloc[:, :17]
-            names = ['Nombre', 'Tipo Doc.', 'Nro. Doc.', 'Estado', 'Fecha Ingreso', 'Fecha Cese', 
-                    'Tiempo Laborado', 'Ult. Costo', 'Jefe Inmediato', 'Ganadas', 'Gan. Inicial', 
-                    'Goz. Inicial', 'No Efectiv.', 'Gozadas', 'Compradas', 'Liquidados', 'Pendientes']
-            mapeo_nombres = dict(zip(df.columns, names))
-            df.rename(columns=mapeo_nombres, inplace=True)
-            df.insert(0, "anio", anio)
-        
-        if code == "vacaciones_pendientes":
-            df = df.drop(0)
-            anio = df.columns[9]
-            df = df.iloc[:, list(range(0, 9)) + list(range(25, 32))]
-            names = ['Nombre', 'Tipo Doc.', 'Nro. Doc.', 'Estado', 'Fecha Ingreso', 
-                     'Fecha Cese', 'Tiempo Laborado', 'Ult. Costo', 'Jefe Inmediato', 
-                     'Pend. Indemn.', 'Pend. Ult. Año', 'Pend. Trunc. Redond.', 
-                     'Pend. Trunc. Compl.', 'Pend. Años Post.', 'Fecha Venc. Pend.Ult.Año', 
-                     'Tiempo Venc. Pend.Ult.Año']
-            mapeo_nombres = dict(zip(df.columns, names))
-            df.rename(columns=mapeo_nombres, inplace=True)
-            df.insert(0, "anio", anio)
-
-        #df =df.loc[df.iloc[:, 0] != "~Total"]
+        if periodo_insert:
+            df.insert(0, 'periodo', periodo_insert)
 
         # Renombrar la columna        
         df.columns = df.columns.str.strip()
@@ -79,7 +133,6 @@ class ReportService:
         df.columns = df.columns.map(limpiar_encabezados)
         df.columns = df.columns.map(underscores)
 
-        """
         if  columnas_id:
             id_df = df[columnas_id].astype(str).apply(lambda x: ''.join(x), axis=1)
             df.insert(0, "id", id_df)
@@ -89,17 +142,15 @@ class ReportService:
                 return texto_limpio
 
             df['id'] = df['id'].apply(limpiar_columna)
-        """
+        
         if grupo:
             df['grupo'] = grupo
-
-
 
         """
         print(df.columns)
         for i in df.columns:
             print(i)
-        print(df)
+        #print(df)
         exit() #"""
         # Configurar la conexión a la base de datos
         properties = self.getProperties()
@@ -111,47 +162,61 @@ class ReportService:
             port=3306
         )
 
-        try:
-            # Crear un cursor y comenzar una transacción
+        if (code == "vacaciones") | (code == "vacaciones_pendientes"):
             cur = conn.cursor()
             cur.execute("START TRANSACTION;")
-            #cur.execute(f"TRUNCATE TABLE {dbTable};")
-            
             sqlHeading = "`"+"`,`".join(df.columns)+"`"
-            
             chunks = [df[i:i + 200] for i in range(0, df.shape[0], 200)]
-
-            #elimina registros para ser reemplazados
-            if anio_insert:
-                cur.execute(f"delete from {dbTable} where anio = {anio_insert} and grupo = '{grupo}';")
-
             for chunk in chunks:
                 values = [tuple(row) for _, row in chunk.iterrows()]
                 try:
-                    # Ejecutar el comando INSERT INTO para cada grupo de 50 filas
-                    consulta = f"""INSERT INTO {dbTable} ({sqlHeading}) VALUES ({', '.join(['%s'] * len(df.columns))});"""
+                    consulta = f"""INSERT INTO {dbTable} ({sqlHeading}) VALUES ({', '.join(['%s'] * len(df.columns))})
+                                    ON DUPLICATE KEY UPDATE {', '.join([f"{col} = VALUES({col})" for col in df.columns])};"""
                     cur.executemany(consulta, values)
                     conn.commit()
-                    #print(f"Se insertaron con éxito {len(chunk)} filas")
                 except Exception as e:
                     print("Ocurrió un error:", e)
-
-
-                            
             print('Se ejecuto correctamente la consulta: ' + dbName + " / " + tableName)
+        else:
+            try:
+                # Crear un cursor y comenzar una transacción
+                cur = conn.cursor()
+                cur.execute("START TRANSACTION;")
+                #cur.execute(f"TRUNCATE TABLE {dbTable};")
+                
+                sqlHeading = "`"+"`,`".join(df.columns)+"`"
+                
+                chunks = [df[i:i + 200] for i in range(0, df.shape[0], 200)]
 
-        except Exception as e:
-            # Revertir la transacción si hay un error            
-            conn.rollback()    
-            print("Hubo un error al importar la informacion: " + str(e) )
-            return 400 
-            
-        finally:
-            # Cerrar la conexión a la base de datos
-            cur.close()
-            conn.close()
+                #elimina registros para ser reemplazados
+                if anio_insert:
+                    cur.execute(f"delete from {dbTable} where anio = {anio_insert} and grupo = '{grupo}';")
 
-        return 200
+                for chunk in chunks:
+                    values = [tuple(row) for _, row in chunk.iterrows()]
+                    try:
+                        # Ejecutar el comando INSERT INTO para cada grupo de 50 filas
+                        consulta = f"""INSERT INTO {dbTable} ({sqlHeading}) VALUES ({', '.join(['%s'] * len(df.columns))});"""
+                        cur.executemany(consulta, values)
+                        conn.commit()
+                        #print(f"Se insertaron con éxito {len(chunk)} filas")
+                    except Exception as e:
+                        print("Ocurrió un error:", e)
+                                
+                print('Se ejecuto correctamente la consulta: ' + dbName + " / " + tableName)
+
+            except Exception as e:
+                # Revertir la transacción si hay un error            
+                conn.rollback()    
+                print("Hubo un error al importar la informacion: " + str(e) )
+                return 400 
+                
+            finally:
+                # Cerrar la conexión a la base de datos
+                cur.close()
+                conn.close()
+
+            return 200
     
     def getProperties(self):
         config_data = None

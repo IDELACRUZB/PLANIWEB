@@ -1,0 +1,28 @@
+{
+    "planiweb":{
+        "bpo":[
+            {
+                "campaign": "bpo",
+                "reports":[
+                    {
+                        "code": "gastos_planilla",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                        "columnas_id":null,
+                        "anadir_fecha": false,
+                        "anadir_anio":false,
+                        "anadir_periodo":true,
+                        "grupo": "BPO"
+                    }
+                ]
+            }
+        ]
+    }
+}

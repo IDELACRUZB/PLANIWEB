@@ -32,6 +32,8 @@ with open(jsonDataReports, "r") as json_file:
                 tipo = reporte["tipo"]
                 anadir_fecha = reporte["anadir_fecha"]
                 anadir_anio = reporte["anadir_anio"]
+                anadir_periodo = reporte["anadir_periodo"]
+                columnas_id = reporte["columnas_id"]
                 data_base = reporte["data_base"]
 
                 skip_rows = reporte["skip_rows"]
@@ -40,7 +42,7 @@ with open(jsonDataReports, "r") as json_file:
                 directoryPath = ROOT_PATH  + platform + "\\" + codigo
                 currentDate = datetime.now().strftime("%Y%m%d")
                 #print(directoryPath)
-                currentDate = '20231226'
+                #currentDate = '20240105'
 
                 # Los reportes son al d-1 por eso la fecha insert es al curdate-1
                 fecha_insert = None
@@ -56,6 +58,14 @@ with open(jsonDataReports, "r") as json_file:
                     fecha_objeto = datetime.strptime(currentDate, "%Y%m%d")
                     fecha_objeto_modificada = fecha_objeto - timedelta(days=1)
                     anio_insert = fecha_objeto_modificada.strftime("%Y")
+                else:
+                    pass
+
+                periodo_insert = None
+                if anadir_periodo:
+                    fecha_objeto = datetime.strptime(currentDate, "%Y%m%d")
+                    fecha_objeto_modificada = fecha_objeto - timedelta(days=1)
+                    periodo_insert = fecha_objeto_modificada.strftime("%Y%m")
                 else:
                     pass
                 
@@ -75,6 +85,8 @@ with open(jsonDataReports, "r") as json_file:
                         'tipo': tipo,
                         'fecha_insert': fecha_insert,
                         'anio_insert': anio_insert,
+                        'periodo_insert': periodo_insert,
+                        'columnas_id': columnas_id,
                         "skip_rows": skip_rows,
                         "grupo": campana,
                         "code": codigo
@@ -96,7 +108,7 @@ if( FILES_NOT_FOUND ):
     exit()
 
 for file in FILES_PATH:        
-    result = mReport.loadData(file['path'], file['table'], file['db'], file['tipo'], file['fecha_insert'], file['anio_insert'], file['grupo'], file["code"], file['skip_rows'], file['properties']['dbType'], file['properties']['renameColumns'], file['properties']['converters'])
+    result = mReport.loadData(file['path'], file['table'], file['db'], file['tipo'], file['fecha_insert'], file['anio_insert'], file['periodo_insert'], file["columnas_id"], file['grupo'], file["code"], file['skip_rows'], file['properties']['dbType'], file['properties']['renameColumns'], file['properties']['converters'])
 
     if(result=='400'):
         email = Email('text')

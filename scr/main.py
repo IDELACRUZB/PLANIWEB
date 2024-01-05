@@ -62,6 +62,7 @@ for key, value in empresa.items():
             datos=[(contador_descargas, campana, nombreAsignado, 1)]
             tablaValidacion.agregarVariosDatos(datos)
         except Exception as e:
+            print('isdb_error: ', e)
             datos=[(contador_descargas, campana, nombreAsignado, 0)]
             tablaValidacion.agregarVariosDatos(datos)
             pass
@@ -82,6 +83,52 @@ for key, value in empresa.items():
     else:
         contador_descargas += 1
         print(f"Descargo reporte {grupo} excepciones")
+        pass
+
+# ===== II. Reporte Excepciones =====
+empresa = {
+    'bpo': 'BPO PERU S.A.C.'
+}
+for key, value in empresa.items():
+    grupo = key
+    razon_social = value
+
+    fecD0 = False
+    campana = "planiweb " + grupo
+
+    def re_prestamos():
+        nombreAsignado = f'{grupo}_excepciones_'
+        try:
+            descarga.limpia_carpeta_descargas()
+            descarga.reporte_prestamos(razon_social, inicio, fin)
+            nombre = descarga.nombreReporte(nombreAsignado, inicio, fin, fecD0)
+            destino = descarga.directoryPath + rf'/carga\{grupo}\prestamos'
+            descarga.renombrarReubicar(nombre, 'xlsx', destino)
+
+            datos=[(contador_descargas, campana, nombreAsignado, 1)]
+            tablaValidacion.agregarVariosDatos(datos)
+        except Exception as e:
+            print('isdb_error: ', e)
+            datos=[(contador_descargas, campana, nombreAsignado, 0)]
+            tablaValidacion.agregarVariosDatos(datos)
+            pass
+
+    re_prestamos()
+    ultimoRegistro = tablaValidacion.leerDatos()
+    descargo = ultimoRegistro[0][3]
+
+    while descargo == 0:
+        tablaValidacion.deleteTable(contador_descargas)
+
+        descarga.reiniciar()
+        logueo()
+
+        re_prestamos()
+        ultimoRegistro = tablaValidacion.leerDatos()
+        descargo = ultimoRegistro[0][3]
+    else:
+        contador_descargas += 1
+        print(f"Descargo reporte {grupo} prestamos")
         pass
 
 print(f"Se descargaron los reportes del día {inicio} al {fin} de la campaña {campana}")

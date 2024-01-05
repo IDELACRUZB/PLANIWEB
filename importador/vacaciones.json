@@ -5,7 +5,7 @@
                 "campaign": "bpo",
                 "reports":[
                     {
-                        "code": "excepciones",
+                        "code": "vacaciones",
                         "data_base": "bd_planiweb",
                         "properties": {
                             "dbType": {
@@ -15,14 +15,13 @@
                         },
                         "tipo": "excel",
                         "skip_rows": 9,
-                        "columnas_id":null,
+                        "columnas_id":["anio", "nro_doc"],
                         "anadir_fecha": false,
-                        "anadir_anio": true,
-                        "anadir_periodo":false,
+                        "anadir_anio":false,
                         "grupo": "BPO"
                     },
                     {
-                        "code": "prestamos",
+                        "code": "vacaciones_pendientes",
                         "data_base": "bd_planiweb",
                         "properties": {
                             "dbType": {
@@ -32,10 +31,9 @@
                         },
                         "tipo": "excel",
                         "skip_rows": 9,
-                        "columnas_id":null,
+                        "columnas_id":["nro_doc"],
                         "anadir_fecha": false,
                         "anadir_anio":false,
-                        "anadir_periodo":false,
                         "grupo": "BPO"
                     }
                 ]
@@ -46,7 +44,7 @@
                 "campaign": "terceriza",
                 "reports":[
                     {
-                        "code": "excepciones",
+                        "code": "vacaciones",
                         "data_base": "bd_planiweb",
                         "properties": {
                             "dbType": {
@@ -56,12 +54,28 @@
                         },
                         "tipo": "excel",
                         "skip_rows": 9,
-                        "columnas_id":null,
+                        "columnas_id":["anio", "nro_doc"],
                         "anadir_fecha": false,
-                        "anadir_anio": true,
-                        "anadir_periodo":false,
+                        "anadir_anio":false,
+                        "grupo": "TERCERIZA"
+                    },
+                    {
+                        "code": "vacaciones_pendientes",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                        "columnas_id":["nro_doc"],
+                        "anadir_fecha": false,
+                        "anadir_anio":false,
                         "grupo": "TERCERIZA"
                     }
+                    
                 ]
             }
         ]
