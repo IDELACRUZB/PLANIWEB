@@ -162,7 +162,7 @@ class ReportService:
             port=3306
         )
 
-        if (code == "vacaciones") | (code == "vacaciones_pendientes"):
+        if (code == "vacaciones") | (code == "vacaciones_pendientes") | (code == "personal"):
             cur = conn.cursor()
             cur.execute("START TRANSACTION;")
             sqlHeading = "`"+"`,`".join(df.columns)+"`"

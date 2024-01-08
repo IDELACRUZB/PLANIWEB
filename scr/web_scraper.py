@@ -183,7 +183,7 @@ class descargaReportes():
         self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[id="mod_btnmnu"]')))
         time.sleep(1)
     
-    # ====== 2. Reporte Excepciones ======
+    # ====== 2. Reporte Prestamos ======
     def reporte_prestamos   (self, empresa, fecha_inicio, fecha_fin):
         menu_button = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[id="mod_btnmnu"]')))
         menu_button.click()
@@ -247,43 +247,6 @@ class descargaReportes():
         btn_buscar.click()
         time.sleep(1)
 
-        '''
-        if fecha_inicio:
-            self.wait.until(EC.invisibility_of_element_located((By.ID, 'loadingMask')))
-            abrir_buscador = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[class="l-btn-icon icon-sbs-search-blue"]')))
-            abrir_buscador.click()
-            time.sleep(1)
-
-            input_fechas = self.driver.find_elements(By.CSS_SELECTOR, '[class="form-control validatebox-text"]')
-            input_fecha_inicio = input_fechas[0]
-            input_fecha_fin = input_fechas[1]
-
-            #input_fecha_inicio.click()
-            fecha_inicio = datetime.datetime.strptime(fecha_inicio, '%Y-%m-%d').year
-            fecha_inicio = '01/01/' + str(fecha_inicio)
-            time.sleep(1)
-            input_fecha_inicio.clear()
-            time.sleep(1)
-            input_fecha_inicio.send_keys(fecha_inicio)
-            time.sleep(1)
-            input_fecha_inicio.send_keys(Keys.RETURN)
-            time.sleep(1)
-
-            #input_fecha_fin.click()
-            fecha_fin = datetime.datetime.strptime(fecha_fin, '%Y-%m-%d').year
-            fecha_fin = '31/12/' + str(fecha_fin)
-            time.sleep(1)
-            input_fecha_fin.clear()
-            time.sleep(1)
-            input_fecha_fin.send_keys(fecha_fin)
-            time.sleep(1)
-            input_fecha_fin.send_keys(Keys.RETURN)
-            time.sleep(1)
-
-            btn_buscar = self.driver.find_element(By.XPATH, '//button[text()="Buscar"]')
-            btn_buscar.click()
-            time.sleep(1)
-        '''
         btn_descargar = self.wait.until(EC.presence_of_element_located((By.XPATH, '//span[@class="l-btn-icon icon-sbs-download-blue"]')))
         btn_descargar.click()
 
@@ -305,6 +268,133 @@ class descargaReportes():
 
         self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[id="mod_btnmnu"]')))
         time.sleep(1)
+
+    # ====== 3. Reporte Vacaciones ======
+    def reporte_vacaciones(self, empresa, fecha_inicio, fecha_fin):
+        menu_button = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[id="mod_btnmnu"]')))
+        menu_button.click()
+        time.sleep(1)
+
+        empresa = self.driver.find_element(By.XPATH, f'//a/span[text()="{empresa}"]')
+        empresa.click()
+        time.sleep(1)
+
+        reportes = self.driver.find_element(By.XPATH, '//li[@class="active"]/ul/li/a[text()="REPORTES   "]')
+        reportes.click()
+        time.sleep(1)
+
+        self.wait.until_not(EC.visibility_of_element_located((By.CSS_SELECTOR, '[id="loadingMsg"]')))
+        #iframe
+        iframe_element = self.wait.until(EC.presence_of_element_located((By.XPATH, '//iframe[contains(@id, "centralreportes")]')))
+        self.driver.switch_to.frame(iframe_element)
+        time.sleep(5)
+        #self.wait.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '[id="HUOcxMNTExcppnlDesplegableId"]')))
+        
+        vacaciones_de_empleados = self.driver.find_element(By.XPATH, '//span[text()="VACACIONES DE EMPLEADOS"]')
+        
+        acciones = ActionChains(self.driver)
+        acciones.double_click(vacaciones_de_empleados).perform()
+        time.sleep(1)
+
+        incluir_deshabilitados = self.driver.find_element(By.XPATH, '//span[text()="Incluir Deshabilitados"]')
+        incluir_deshabilitados.click()
+        time.sleep(1)
+
+        cantidad_excel_inicial = self.cantidad_excel()
+
+        btn_buscar = self.driver.find_element(By.XPATH, '//button[text()="Buscar"]')
+        btn_buscar.click()
+        time.sleep(3)
+
+        btn_descargar = self.wait.until(EC.presence_of_element_located((By.XPATH, '//span[@class="l-btn-icon icon-sbs-download-blue"]')))
+        btn_descargar.click()
+
+        #Valida que la descarga concluya
+        cantidad_excel_final = cantidad_excel_inicial
+        while cantidad_excel_final == cantidad_excel_inicial:
+            time.sleep(1)
+            cantidad_excel_final = self.cantidad_excel()
+        else:
+            pass
+
+        time.sleep(1)
+
+        self.driver.switch_to.default_content()
+        self.driver.refresh()
+        
+        self.wait.until_not(EC.visibility_of_element_located((By.CSS_SELECTOR, '[id="loadingMsg"]')))
+        time.sleep(1)
+
+        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[id="mod_btnmnu"]')))
+        time.sleep(1)
+
+    # ====== 4. Reporte Personal ======
+    def reporte_personal(self, empresa, fecha_inicio, fecha_fin):
+        menu_button = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[id="mod_btnmnu"]')))
+        menu_button.click()
+        time.sleep(1)
+
+        empresa = self.driver.find_element(By.XPATH, f'//a/span[text()="{empresa}"]')
+        empresa.click()
+        time.sleep(1)
+
+        rrhh = self.driver.find_element(By.XPATH, '//li[@class="active"]/ul/li/a[text()="RR.HH.   "]')
+        rrhh.click()
+        time.sleep(1)
+
+        empleados = self.driver.find_element(By.XPATH, '//li[@class="active"]/ul/li/ul/li/a[text()="EMPLEADOS   "]')
+        empleados.click()
+        time.sleep(1)
+
+        self.wait.until_not(EC.visibility_of_element_located((By.CSS_SELECTOR, '[id="loadingMsg"]')))
+        #iframe
+        iframe_element = self.wait.until(EC.presence_of_element_located((By.XPATH, '//iframe[contains(@id, "rrhh")]')))
+        self.driver.switch_to.frame(iframe_element)
+        time.sleep(5)
+        #self.wait.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '[id="HUOcxMNTExcppnlDesplegableId"]')))
+        
+        cantidad_excel_inicial = self.cantidad_excel()
+        abrir_buscador = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[class="l-btn-icon icon-sbs-search-blue"]')))
+        abrir_buscador.click()
+        time.sleep(1)
+
+        checkboxs = self.driver.find_elements(By.XPATH, '//div[@class="content-input"]/div/div/div/input[@type="checkbox"]')
+        checkbox_estado = checkboxs[0]
+        checkbox_estado.click()
+        time.sleep(1)
+        checkbox_estado_liquidacion = checkboxs[1]
+        checkbox_estado_liquidacion.click()
+        time.sleep(1)
+
+        buscar = self.driver.find_element(By.CSS_SELECTOR, '[class="input-group-addon icon-sbs-search-blue"]')
+        buscar.click()
+        time.sleep(3)
+
+        #self.wait.until_not(By.CSS_SELECTOR,'[class="datagrid-mask-msg"]')
+        self.wait.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '[class="datagrid-mask-msg"]')))
+
+        btn_descargar = self.wait.until(EC.presence_of_element_located((By.XPATH, '//span[@class="l-btn-icon icon-sbs-download-blue"]')))
+        btn_descargar.click()
+
+        #Valida que la descarga concluya
+        cantidad_excel_final = cantidad_excel_inicial
+        while cantidad_excel_final == cantidad_excel_inicial:
+            time.sleep(1)
+            cantidad_excel_final = self.cantidad_excel()
+        else:
+            pass
+
+        time.sleep(1)
+
+        self.driver.switch_to.default_content()
+        self.driver.refresh()
+        
+        self.wait.until_not(EC.visibility_of_element_located((By.CSS_SELECTOR, '[id="loadingMsg"]')))
+        time.sleep(1)
+
+        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[id="mod_btnmnu"]')))
+        time.sleep(1)
+  
 
     # Funcion que reubicará las descargas en sus respectivas carpetas
     def renombrarReubicar(self, nuevoNombre, extension, carpetaDestino):
@@ -360,6 +450,19 @@ class descargaReportes():
                 os.remove(ruta_completa)
                 print(f"Archivo eliminado: {ruta_completa}")
 
+    def copiar_descarga(self, origen, destino, fecha):
+        carpeta_origen = origen
+        carpeta_destino = destino
+
+        # Obtener una lista de archivos en la carpeta de origen que contienen "20240108"
+        archivos = [f for f in os.listdir(carpeta_origen) if f"{fecha}" in f]
+        if archivos:
+            archivo_mas_reciente = max(archivos, key=lambda f: os.path.getmtime(os.path.join(carpeta_origen, f)))
+            ruta_archivo_mas_reciente = os.path.join(carpeta_origen, archivo_mas_reciente)
+            shutil.copy(ruta_archivo_mas_reciente, carpeta_destino)
+            print(f'Archivo copiado con éxito: {archivo_mas_reciente}')
+        else:
+            print('No se encontraron archivos que cumplan con el criterio.')
 
     def gameOver(self):
         self.driver.quit()

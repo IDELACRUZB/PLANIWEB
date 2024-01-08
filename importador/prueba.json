@@ -37,6 +37,57 @@
                         "anadir_anio":false,
                         "anadir_periodo":false,
                         "grupo": "BPO"
+                    },
+                    {
+                        "code": "vacaciones",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                        "columnas_id":["anio", "nro_doc"],
+                        "anadir_fecha": false,
+                        "anadir_anio":false,
+                        "anadir_periodo":false,
+                        "grupo": "BPO"
+                    },
+                    {
+                        "code": "vacaciones_pendientes",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                        "columnas_id":["nro_doc"],
+                        "anadir_fecha": false,
+                        "anadir_anio":false,
+                        "anadir_periodo":false,
+                        "grupo": "BPO"
+                    },
+                    {
+                        "code": "personal",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                        "columnas_id":["nro_doc"],
+                        "anadir_fecha": false,
+                        "anadir_anio":false,
+                        "anadir_periodo":false,
+                        "grupo": "BPO"
                     }
                 ]
             }
