@@ -162,7 +162,7 @@ class ReportService:
             port=3306
         )
 
-        if (code == "vacaciones") | (code == "vacaciones_pendientes") | (code == "personal"):
+        if (code == "vacaciones") | (code == "vacaciones_pendientes") | (code == "personal") | (code == "cesados_planilla"):
             cur = conn.cursor()
             cur.execute("START TRANSACTION;")
             sqlHeading = "`"+"`,`".join(df.columns)+"`"
@@ -176,7 +176,7 @@ class ReportService:
                     conn.commit()
                 except Exception as e:
                     print("Ocurrió un error:", e)
-            print('Se ejecuto correctamente la consulta: ' + dbName + " / " + tableName)
+            print('Se ejecuto correctamente la consulta: ' + dbName + " / " + grupo + " / " + tableName)
         else:
             try:
                 # Crear un cursor y comenzar una transacción
@@ -203,7 +203,7 @@ class ReportService:
                     except Exception as e:
                         print("Ocurrió un error:", e)
                                 
-                print('Se ejecuto correctamente la consulta: ' + dbName + " / " + tableName)
+                print('Se ejecuto correctamente la consulta: ' + dbName + " / " + grupo + " / " + tableName)
 
             except Exception as e:
                 # Revertir la transacción si hay un error            

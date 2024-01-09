@@ -44,6 +44,7 @@ empresa = {
 
 contador_descargas = 1
 
+# ===== 1. Reporte Excepciones =====
 for key, value in empresa.items():
     grupo = key
     razon_social = value
@@ -86,7 +87,7 @@ for key, value in empresa.items():
         print(f"Descargo reporte {grupo} excepciones")
         pass
 
-# ===== II. Reporte Excepciones =====
+# ===== 2. Reporte Prestamos =====
 empresa = {
     'bpo': 'BPO PERU S.A.C.'
 }
@@ -98,7 +99,7 @@ for key, value in empresa.items():
     campana = "planiweb " + grupo
 
     def re_prestamos():
-        nombreAsignado = f'{grupo}_excepciones_'
+        nombreAsignado = f'{grupo}_prestamos_'
         try:
             descarga.limpia_carpeta_descargas()
             descarga.reporte_prestamos(razon_social, inicio, fin)
@@ -132,7 +133,7 @@ for key, value in empresa.items():
         print(f"Descargo reporte {grupo} prestamos")
         pass
 
-# ===== III. Reporte Vacaciones =====
+# ===== 3. Reporte Vacaciones =====
 empresa = {
     'bpo': 'BPO PERU S.A.C.'
 }
@@ -183,7 +184,7 @@ for key, value in empresa.items():
         pass
 
 
-# ===== IV. Reporte Excepciones =====
+# ===== 4. Reporte Personal =====
 empresa = {
     'bpo': 'BPO PERU S.A.C.'
 }
@@ -222,6 +223,98 @@ for key, value in empresa.items():
         logueo()
 
         re_perosnal()
+        ultimoRegistro = tablaValidacion.leerDatos()
+        descargo = ultimoRegistro[0][3]
+    else:
+        contador_descargas += 1
+        print(f"Descargo reporte {grupo} prestamos")
+        pass
+
+# ===== 5. Reporte Administrador Acuses =====
+empresa = {
+    'bpo': 'BPO PERU S.A.C.'
+}
+for key, value in empresa.items():
+    grupo = key
+    razon_social = value
+
+    fecD0 = False
+    campana = "planiweb " + grupo
+
+    def re_acuses():
+        nombreAsignado = f'{grupo}_administrador_acuses_'
+        try:
+            descarga.limpia_carpeta_descargas()
+            descarga.reporte_acuses(razon_social, inicio, fin)
+            nombre = descarga.nombreReporte(nombreAsignado, inicio, fin, fecD0)
+            destino = descarga.directoryPath + rf'/carga\{grupo}\administrador_acuses'
+            descarga.renombrarReubicar(nombre, 'xlsx', destino)
+
+            datos=[(contador_descargas, campana, nombreAsignado, 1)]
+            tablaValidacion.agregarVariosDatos(datos)
+        except Exception as e:
+            print('isdb_error: ', e)
+            datos=[(contador_descargas, campana, nombreAsignado, 0)]
+            tablaValidacion.agregarVariosDatos(datos)
+            pass
+
+    re_acuses()
+    ultimoRegistro = tablaValidacion.leerDatos()
+    descargo = ultimoRegistro[0][3]
+
+    while descargo == 0:
+        tablaValidacion.deleteTable(contador_descargas)
+
+        descarga.reiniciar()
+        logueo()
+
+        re_acuses()
+        ultimoRegistro = tablaValidacion.leerDatos()
+        descargo = ultimoRegistro[0][3]
+    else:
+        contador_descargas += 1
+        print(f"Descargo reporte {grupo} prestamos")
+        pass
+
+# ===== 6. Reporte Cesados en Planilla =====
+empresa = {
+    'bpo': 'BPO PERU S.A.C.'
+}
+for key, value in empresa.items():
+    grupo = key
+    razon_social = value
+
+    fecD0 = False
+    campana = "planiweb " + grupo
+
+    def re_cesados_planilla():
+        nombreAsignado = f'{grupo}_cesados_planilla_'
+        try:
+            descarga.limpia_carpeta_descargas()
+            descarga.reporte_cesados_en_planilla(razon_social, inicio, fin)
+            nombre = descarga.nombreReporte(nombreAsignado, inicio, fin, fecD0)
+            destino = descarga.directoryPath + rf'/carga\{grupo}\cesados_planilla'
+            descarga.renombrarReubicar(nombre, 'xlsx', destino)
+
+            datos=[(contador_descargas, campana, nombreAsignado, 1)]
+            tablaValidacion.agregarVariosDatos(datos)
+        except Exception as e:
+            print('isdb_error: ', e)
+            datos=[(contador_descargas, campana, nombreAsignado, 0)]
+            tablaValidacion.agregarVariosDatos(datos)
+            pass
+
+    re_cesados_planilla()
+    ultimoRegistro = tablaValidacion.leerDatos()
+    descargo = ultimoRegistro[0][3]
+
+    while descargo == 0:
+        tablaValidacion.deleteTable(contador_descargas)
+
+        descarga.reiniciar()
+        logueo()
+
+        re_cesados_planilla()
         ultimoRegistro = tablaValidacion.leerDatos()
         descargo = ultimoRegistro[0][3]
     else:

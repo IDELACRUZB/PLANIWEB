@@ -88,6 +88,40 @@
                         "anadir_anio":false,
                         "anadir_periodo":false,
                         "grupo": "BPO"
+                    },
+                    {
+                        "code": "administrador_acuses",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                        "columnas_id":null,
+                        "anadir_fecha": false,
+                        "anadir_anio":false,
+                        "anadir_periodo":false,
+                        "grupo": "BPO"
+                    },
+                    {
+                        "code": "cesados_planilla",
+                        "data_base": "bd_planiweb",
+                        "properties": {
+                            "dbType": {
+                            },
+                            "renameColumns": {},
+                            "converters": {}
+                        },
+                        "tipo": "excel",
+                        "skip_rows": 9,
+                        "columnas_id":["nro_doc", "periodo", "f_ingreso"],
+                        "anadir_fecha": false,
+                        "anadir_anio":false,
+                        "anadir_periodo":false,
+                        "grupo": "BPO"
                     }
                 ]
             }

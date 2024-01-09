@@ -394,7 +394,171 @@ class descargaReportes():
 
         self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[id="mod_btnmnu"]')))
         time.sleep(1)
-  
+
+    # ====== 5. Reporte Acuses ======
+    def reporte_acuses(self, empresa, fecha_inicio, fecha_fin):
+        menu_button = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[id="mod_btnmnu"]')))
+        menu_button.click()
+        time.sleep(1)
+
+        empresa = self.driver.find_element(By.XPATH, f'//a/span[text()="{empresa}"]')
+        empresa.click()
+        time.sleep(1)
+
+        rrhh = self.driver.find_element(By.XPATH, '//li[@class="active"]/ul/li/a[text()="RR.HH.   "]')
+        rrhh.click()
+        time.sleep(1)
+
+        administrador_acuses = self.driver.find_element(By.XPATH, '//li[@class="active"]/ul/li/ul/li/a[text()="ADMINISTRADOR ACUSES   "]')
+        administrador_acuses.click()
+        time.sleep(1)
+
+        self.wait.until_not(EC.visibility_of_element_located((By.CSS_SELECTOR, '[id="loadingMsg"]')))
+        #iframe
+        iframe_element = self.wait.until(EC.presence_of_element_located((By.XPATH, '//iframe[contains(@id, "acuse")]')))
+        self.driver.switch_to.frame(iframe_element)
+        time.sleep(5)
+        #self.wait.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '[id="HUOcxMNTExcppnlDesplegableId"]')))
+        
+        self.wait.until(EC.invisibility_of_element_located((By.ID, 'loadingMask')))
+        abrir_buscador = self.wait.until(EC.presence_of_element_located((By.XPATH, '//div[contains(@class,"search-button")]')))
+        abrir_buscador.click()
+        time.sleep(1)
+        
+        fecha_inicio = datetime.datetime.strptime(fecha_inicio, '%Y-%m-%d')
+        fecha_inicio = fecha_inicio.strftime('%d/%m/%Y')
+
+        input_fecha_inicio = self.driver.find_element(By.XPATH, '//div[@class="textbox-desde"]/div/div/div/input')
+        input_fecha_inicio.clear()
+        time.sleep(1)
+        input_fecha_inicio.send_keys(fecha_inicio)
+        time.sleep(1)
+
+        fecha_fin = datetime.datetime.strptime(fecha_fin, '%Y-%m-%d')
+        fecha_fin = fecha_fin.strftime('%d/%m/%Y')
+
+        input_fecha_fin = self.driver.find_element(By.XPATH, '//div[@class="textbox-hasta"]/div/div/div/input')
+        input_fecha_fin.clear()
+        time.sleep(1)
+        input_fecha_fin.send_keys(fecha_inicio)
+        time.sleep(1)
+
+        btn_buscar = self.driver.find_element(By.XPATH, '//button[text()="Buscar"]')
+        btn_buscar.click()
+        time.sleep(5)
+        
+        cantidad_excel_inicial = self.cantidad_excel()
+
+        tres_puntos = self.wait.until(EC.presence_of_element_located((By.XPATH, '//div/span[text()="more_vert"]')))
+        tres_puntos.click()
+        time.sleep(1)
+
+        btn_descargar = self.wait.until(EC.presence_of_element_located((By.XPATH, '//div[text()=" Reporte"]')))
+        btn_descargar.click()
+
+        #Valida que la descarga concluya
+        cantidad_excel_final = cantidad_excel_inicial
+        while cantidad_excel_final == cantidad_excel_inicial:
+            time.sleep(1)
+            cantidad_excel_final = self.cantidad_excel()
+        else:
+            pass
+
+        time.sleep(1)
+
+        self.driver.switch_to.default_content()
+        self.driver.refresh()
+        
+        self.wait.until_not(EC.visibility_of_element_located((By.CSS_SELECTOR, '[id="loadingMsg"]')))
+        time.sleep(1)
+
+        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[id="mod_btnmnu"]')))
+        time.sleep(1)
+
+    # ====== 6. Reporte Cesados en Planilla ======
+    def reporte_cesados_en_planilla(self, empresa, fecha_inicio, fecha_fin):
+        menu_button = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[id="mod_btnmnu"]')))
+        menu_button.click()
+        time.sleep(1)
+
+        empresa = self.driver.find_element(By.XPATH, f'//a/span[text()="{empresa}"]')
+        empresa.click()
+        time.sleep(1)
+
+        reportes = self.driver.find_element(By.XPATH, '//li[@class="active"]/ul/li/a[text()="REPORTES   "]')
+        reportes.click()
+        time.sleep(1)
+
+        self.wait.until_not(EC.visibility_of_element_located((By.CSS_SELECTOR, '[id="loadingMsg"]')))
+        #iframe
+        iframe_element = self.wait.until(EC.presence_of_element_located((By.XPATH, '//iframe[contains(@id, "centralreportes")]')))
+        self.driver.switch_to.frame(iframe_element)
+        time.sleep(5)
+        #self.wait.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '[id="HUOcxMNTExcppnlDesplegableId"]')))
+        
+        cesados_en_planilla = self.driver.find_element(By.XPATH, '//span[@class="tree-title" and text()="CESADOS EN PLANILLA"]')
+        
+        acciones = ActionChains(self.driver)
+        acciones.double_click(cesados_en_planilla).perform()
+        time.sleep(1)
+
+        input_fechas = self.driver.find_elements(By.CSS_SELECTOR, '[class="form-control validatebox-text"]')
+        input_fecha_inicio = input_fechas[0]
+        input_fecha_fin = input_fechas[1]
+
+        #input_fecha_inicio.click()
+        fecha_inicio = datetime.datetime.strptime(fecha_inicio, '%Y-%m-%d')
+        fecha_inicio = fecha_inicio - datetime.timedelta(days=365) # ********* Resta un año *******
+        fecha_inicio = fecha_inicio.strftime('%d/%m/%Y')
+        
+        time.sleep(1)
+        input_fecha_inicio.clear()
+        time.sleep(1)
+        input_fecha_inicio.send_keys(fecha_inicio)
+        time.sleep(1)
+        input_fecha_inicio.send_keys(Keys.RETURN)
+        time.sleep(1)
+
+        #input_fecha_fin.click()
+        fecha_fin = datetime.datetime.strptime(fecha_fin, '%Y-%m-%d')
+        fecha_fin = fecha_fin.strftime('%d/%m/%Y')
+
+        time.sleep(1)
+        input_fecha_fin.clear()
+        time.sleep(1)
+        input_fecha_fin.send_keys(fecha_fin)
+        time.sleep(1)
+        input_fecha_fin.send_keys(Keys.RETURN)
+        time.sleep(1)
+
+        btn_buscar = self.driver.find_element(By.XPATH, '//button[text()="Buscar"]')
+        btn_buscar.click()
+        time.sleep(5)
+
+        cantidad_excel_inicial = self.cantidad_excel()
+
+        btn_descargar = self.wait.until(EC.presence_of_element_located((By.XPATH, '//a[text()="download"]')))
+        btn_descargar.click()
+
+        #Valida que la descarga concluya
+        cantidad_excel_final = cantidad_excel_inicial
+        while cantidad_excel_final == cantidad_excel_inicial:
+            time.sleep(1)
+            cantidad_excel_final = self.cantidad_excel()
+        else:
+            pass
+
+        time.sleep(1)
+
+        self.driver.switch_to.default_content()
+        self.driver.refresh()
+        
+        self.wait.until_not(EC.visibility_of_element_located((By.CSS_SELECTOR, '[id="loadingMsg"]')))
+        time.sleep(1)
+
+        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[id="mod_btnmnu"]')))
+        time.sleep(1)
+
 
     # Funcion que reubicará las descargas en sus respectivas carpetas
     def renombrarReubicar(self, nuevoNombre, extension, carpetaDestino):
